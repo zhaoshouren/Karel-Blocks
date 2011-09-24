@@ -5,60 +5,64 @@ var Direction = {
 	SOUTH: 2,
 	WEST: 3,
 	
-	leftOf: function(direction) {
-		if (direction == Direction.NORTH) {
-			return Direction.WEST;
+	leftOf: function (direction) {
+		if (direction == NORTH) {
+			return WEST;
 		} else {
 			return --direction;
 		}
 	},
 	
-	rightOf: function(direction) {
-		if (direction == Direction.WEST) {
-			return Direction.NORTH;
+	rightOf: function (direction) {
+		if (direction == WEST) {
+			return NORTH;
 		} else {
 			return ++direction;
 		}
 	},
 	
-	oppositeOf: function(direction) {
-		switch(direction) {	
-		case Direction.NORTH:
-			return Direction.SOUTH;
-			break;
-		case Direction.EAST:
-			return Direction.WEST;
-			break;
-		case Direction.SOUTH:
-			return Direction.NORTH;
-			break;
-		case Direction.WEST:
-			return Direction.EAST;
-			break;
+	oppositeOf: function (direction) {
+		switch (direction) {	
+		case NORTH:
+			return SOUTH;
+		case EAST:
+			return WEST;
+		case SOUTH:
+			return NORTH;
+		case WEST:
+			return EAST;
 		}
 	}
 };
 
 function Coordinate(x, y) {
 	var self = this;
+		
 	self.x = x;
 	self.y = y;
 }
 
 Coordinate.prototype = {
-	getAdjacent: function(direction) {
-		var coordinate = new Coordinate(this.x, this.y);
+	getAdjacent: function (direction) {
+		var self = this,
+			coordinate = new Coordinate(self.x, self.y);
 		
 		switch(direction) {
 		case Direction.EAST:
-			return ++coordinate.x;
+			coordinate.x++;
+			break;
 		case Direction.NORTH:
-			return ++coordinate.y;
+			coordinate.y++;
+			break;
 		case Direction.WEST:
-			return --coordinate.x;
+			coordinate.x--;
+			break;
 		case Direction.SOUTH:
-			return --coordinate.y;			
+			coordinate.y--;	
+			break;
 		}
+		
+		return coordinate;
 	},
 
 	isValid: function(grid) {
@@ -71,6 +75,7 @@ Coordinate.prototype = {
 
 function Karel() {
 	var self = this;
+	
 	self.world = null,
 	self.direction = Direction.EAST,
 	self.coordinate = new Coordinate(0, 0),
