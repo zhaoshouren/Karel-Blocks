@@ -1,3 +1,5 @@
+!(function(namespace, merge) {
+
 var Direction = {
 	
 	NORTH: 0,
@@ -73,35 +75,36 @@ Coordinate.prototype = {
 	}
 };
 
-function Karel() {
+namespace.Karel = function Karel() {
 	var self = this;
 	
 	self.world = null,
 	self.direction = Direction.EAST,
 	self.coordinate = new Coordinate(0, 0),
 	self.beepers = 0;
-}
+};
 
-Karel.prototype = {
+namespace.Karel.prototype = {
 	
 	init: function(config) {
 		merge(this, config);
 	},
 		
 	update: function() {
-		this.world.update(this.direction, this.coordinate);
+        var self = this;
+        
+		self.world.update(self.direction, self.coordinate);
 	},
-	
-	isClear: this.world.isClear,
 	
 	command: {
 		move: function() {
 			var self = this,
+                world = self.world,
 				direction = self.direction,
 				coordinate = self.coordinate,
 				adjacentCoordinate = coordinate.getAdjacent(direction);				
 			
-			if (isClear(direction, coordinate, adjacentCoordinate)) {
+			if (world.isClear(direction, coordinate, adjacentCoordinate)) {
 				coordinate = adjacentCoordinate;
 				return true;
 			} else {
@@ -135,11 +138,13 @@ Karel.prototype = {
 		},
 	
 		putBeeper: function() {
+            var self = this;
+            
 			if(beepers == null || beepers-- > 0) {
-				this.world.putBeeper(this.coordinate);
+				self.world.putBeeper(self.coordinate);
 				return true;
 			} else {
-				this.error = "Not enough beepers.";
+				self.error = "Not enough beepers.";
 				return false;
 			}
 		},
@@ -159,7 +164,7 @@ Karel.prototype = {
 	condition: {
 	
 		frontIsClear: function() {
-			return isClear(this.direction, this.coordinate);
+			return this.world.isClear(this.direction, this.coordinate);
 		},
 		
 		frontIsBlocked: function() {
@@ -167,7 +172,7 @@ Karel.prototype = {
 		},
 		
 		leftIsClear: function() {
-			return isClear(Direction.leftOf(this.direction), this.coordinate);
+			return this.world.isClear(Direction.leftOf(this.direction), this.coordinate);
 		},
 		
 		leftIsBlocked: function() {
@@ -175,7 +180,7 @@ Karel.prototype = {
 		},
 		
 		rightIsClear: function() {
-			return isClear(Direction.rightOf(this.direction), this.coordinate);
+			return this.world.isClear(Direction.rightOf(this.direction), this.coordinate);
 		},
 		
 		rightIsBlocked: function() {
@@ -232,13 +237,13 @@ Karel.prototype = {
 	}
 };
 
-function World() {
+namespace.World = function World() {
 	var self = this;
 	self.grid = [[]];
 	self.map = [[]];
-}
+};
 
-World.prototype = {
+namespace.World.prototype = {
 	init: function (config) {
 		merge(this, config);
 	},
@@ -336,3 +341,10 @@ Tile.prototype = {
 		walls[direction] = state;
 	}
 };
+
+}(window.KarelBlocks = {}, function () {}));
+
+with(KarelBlocks) {
+    var karel = new Karel();
+}
+
